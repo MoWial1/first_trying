@@ -7,24 +7,27 @@ import java.util.stream.StreamSupport;
 
 public class Demo5 {
     public static <T> Stream<T> zip(Stream<T> first, Stream<T> second) {
-        Stream<T> tempStream = Stream.concat(
-               Optional.ofNullable(first).orElseThrow(), Optional.ofNullable(second).orElseThrow()
-        );
-        Iterator<T> iterator = tempStream.iterator();
+        Iterator<T> firstIterator = first.iterator();
+        Iterator<T> secondIterator = second.iterator();
+
+        Iterator<T> majorIterator =  new Iterator<T>() {
+            @Override
+            public boolean hasNext() {
+                return firstIterator.hasNext() && secondIterator.hasNext();
+            }
+
+            @Override
+            public T next() {
+                Random random = new Random();
+                if (random.nextInt() % 2 == 0) {
+                    return firstIterator.next();
+                }
+                return secondIterator.next();
+            }
+        };
 
         Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(
-                new Iterator<T>() {
-                    @Override
-                    public boolean hasNext() {
-                        return iterator.hasNext();
-                    }
-
-                    @Override
-                    public T next() {
-                        return iterator.next();
-                    }
-                },
-                Spliterator.ORDERED
+                majorIterator, Spliterator.ORDERED
         );
 
         return StreamSupport.stream(spliterator, false);
