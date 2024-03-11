@@ -38,6 +38,8 @@ public class Demo123 {
                 .toArray(String[]::new);
     }
 
+    // task 3
+
     public static String sortStrArrToString(String[] array) {
         return Arrays.stream(array)
                 .flatMap(str -> Arrays.stream(str.split(", ")))
